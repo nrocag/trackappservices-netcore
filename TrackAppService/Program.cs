@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace TrackAppServices
+namespace TrackAppService
 {
     public class Program
     {
@@ -19,7 +19,6 @@ namespace TrackAppServices
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-            .UseKestrel(c => c.AddServerHeader = false)
-            .UseStartup<Startup>();
+                .UseStartup<Startup>();
     }
 }

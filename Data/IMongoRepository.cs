@@ -5,9 +5,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using TrackAppServices.Entities;
+using Entities;
+using Entities.Model;
 
-namespace TrackAppServices.DataBase
+namespace Data
 {
     public interface IMongoRepository<T> where T : EntityBase, new()
     {
@@ -21,12 +22,12 @@ namespace TrackAppServices.DataBase
 
         Task<T> FindOneAndUpdate(Expression<Func<T, bool>> expression, UpdateDefinition<T> update, FindOneAndUpdateOptions<T> option);
 
-        void UpdateOne(Expression<Func<T, bool>> expression, T update);
+        Task UpdateOne(Expression<Func<T, bool>> expression, T update);
 
-        void DeleteOne(Expression<Func<T, bool>> expression);
+        Task DeleteOne(Expression<Func<T, bool>> expression);
 
-        void InsertMany(IEnumerable<T> items);
+        Task InsertMany(IEnumerable<T> items);
 
-        void InsertOne(T item);
+        Task InsertOne(T item);
     }
 }

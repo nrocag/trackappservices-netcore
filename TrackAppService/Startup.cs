@@ -10,13 +10,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using TrackAppServices.DataBase;
-using TrackAppServices.Entities;
 using Swashbuckle.AspNetCore.Swagger;
+using Entities.Model;
+using Bussiness;
 
-
-
-namespace TrackAppServices
+namespace TrackAppService
 {
     public class Startup
     {
@@ -51,7 +49,7 @@ namespace TrackAppServices
                 c.SwaggerDoc("v1", new Info { Title = nombreAplicacionSwagger, Version = "v1" });
             });
 
-            services.AddScoped<IMongoRepository<Device>, MongoRepository<Device>>();
+            services.AddScoped<IBussinessDevice, BussinessDevice>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

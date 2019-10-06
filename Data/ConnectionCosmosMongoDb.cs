@@ -1,4 +1,4 @@
-﻿namespace TrackAppServices.DataBase
+﻿namespace Data
 {
     using System;
     using System.Threading.Tasks;

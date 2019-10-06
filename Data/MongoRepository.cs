@@ -1,4 +1,4 @@
-﻿namespace TrackAppServices.DataBase
+﻿namespace Data
 {
     using MongoDB.Driver;
     using MongoDB.Driver.Linq;
@@ -7,7 +7,8 @@
     using System.Linq;
     using System.Linq.Expressions;
     using System.Threading.Tasks;
-    using TrackAppServices.Entities;
+    using Entities;
+    using Entities.Model;
 
     public class MongoRepository<T> : IMongoRepository<T> where T : EntityBase, new()
     {
@@ -62,22 +63,22 @@
             return await this.Collection.FindOneAndUpdateAsync(expression, update, option);
         }
 
-        public async void UpdateOne(Expression<Func<T, bool>> expression, T update)
+        public async Task UpdateOne(Expression<Func<T, bool>> expression, T update)
         {
             await this.Collection.ReplaceOneAsync(expression, update);
         }
 
-        public async void DeleteOne(Expression<Func<T, bool>> expression)
+        public async Task DeleteOne(Expression<Func<T, bool>> expression)
         {
             await this.Collection.DeleteOneAsync(expression);
         }
 
-        public async void InsertMany(IEnumerable<T> items)
+        public async Task InsertMany(IEnumerable<T> items)
         {
             await this.Collection.InsertManyAsync(items);
         }
 
-        public async void InsertOne(T item)
+        public async Task InsertOne(T item)
         {
             await this.Collection.InsertOneAsync(item);
         }
