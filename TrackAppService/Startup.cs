@@ -1,18 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Bussiness;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Swagger;
-using Entities.Model;
-using Bussiness;
 
 namespace TrackAppService
 {
@@ -20,7 +12,7 @@ namespace TrackAppService
     {
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+            this.Configuration = configuration;
         }
 
         readonly string nombreAplicacionSwagger = "TrackApp";
@@ -34,16 +26,17 @@ namespace TrackAppService
         {
             services.AddCors(options =>
             {
-                options.AddPolicy(nombrePoliticaCors,
+                options.AddPolicy(this.nombrePoliticaCors,
                 builder =>
                 {
-                    builder.WithOrigins("http://localhost:3001",
-                                        "http://localhost:3000");
+                    builder.WithOrigins("http://localhost:3001", "http://localhost:3000", "http://localhost:8200", "http://localhost:8100")
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials();
                 });
             });
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-            //services.AddMvc();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info { Title = nombreAplicacionSwagger, Version = "v1" });
@@ -64,7 +57,7 @@ namespace TrackAppService
                 app.UseHsts();
             }
 
-            app.UseCors(nombrePoliticaCors);
+            app.UseCors(this.nombrePoliticaCors);
 
             app.UseSwagger();
 

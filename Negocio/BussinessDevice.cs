@@ -3,7 +3,6 @@ using Entities.Model;
 using Entities.Response;
 using Entities.Response.Device;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Bussiness
@@ -20,13 +19,13 @@ namespace Bussiness
         public async Task<DeviceResponse> GetAll()
         {
             IEnumerable<Device> devices = await this.Repository.GetAll();
-            
+
             return new DeviceResponseQueryBySeveral(devices);
         }
 
         public async Task<DeviceResponse> GetById(string id)
         {
-            Device device = await this.Repository.GetOne(x => x._id.Equals(id));
+            Device device = await this.Repository.GetOne(id);
 
             return new DeviceResponseQueryByOne(device);
         }
@@ -47,7 +46,7 @@ namespace Bussiness
 
         public async Task<DeviceResponse> Delete(string id)
         {
-            await this.Repository.DeleteOne(x => x._id.ToString().Equals(id));
+            await this.Repository.DeleteById(id);
 
             return new DeviceResponse(Message.Message4, true);
         }

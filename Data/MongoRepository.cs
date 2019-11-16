@@ -1,5 +1,7 @@
 ﻿namespace Data
 {
+    using Entities.Model;
+    using MongoDB.Bson;
     using MongoDB.Driver;
     using MongoDB.Driver.Linq;
     using System;
@@ -7,8 +9,6 @@
     using System.Linq;
     using System.Linq.Expressions;
     using System.Threading.Tasks;
-    using Entities;
-    using Entities.Model;
 
     public class MongoRepository<T> : IMongoRepository<T> where T : EntityBase, new()
     {
@@ -19,8 +19,6 @@
         public MongoRepository()
         {
             this.collectionName = typeof(T).Name;
-
-            //db = server.GetDatabase(MongoUrl.Create(connectionString).DatabaseName);
             this.db = ConnectionCosmosMongoDb.DataBase;
         }
 
@@ -48,9 +46,10 @@
             }
         }
 
-        public async Task<T> GetOne(Expression<Func<T, bool>> expression)
+        public async Task<T> GetOne(string id)
         {
-            return await this.Collection.Find(expression).SingleOrDefaultAsync();
+            ObjectId objectId = new ObjectId(id);
+            return await this.Collection.Find(x => x._id.Equals(objectId)).SingleOrDefaultAsync();
         }
 
         public async Task<IEnumerable<T>> GetMany(Expression<Func<T, bool>> expression)
@@ -73,6 +72,17 @@
             await this.Collection.DeleteOneAsync(expression);
         }
 
+        public async Task DeleteById(string id)
+        {
+            ObjectId objectId = new ObjectId(id);
+            DeleteResult result = await this.Collection.DeleteOneAsync(x => x._id.Equals(objectId));
+
+            if (result.DeletedCount <= 0)
+            {
+                throw new KeyNotFoundException("No se pudo eliminar el registro con id" + id);
+            }
+        }
+
         public async Task InsertMany(IEnumerable<T> items)
         {
             await this.Collection.InsertManyAsync(items);
@@ -80,6 +90,7 @@
 
         public async Task InsertOne(T item)
         {
+            item._id = ObjectId.GenerateNewId().ToString();
             await this.Collection.InsertOneAsync(item);
         }
 

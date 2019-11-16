@@ -7,18 +7,21 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Entities;
 using Entities.Model;
+using MongoDB.Bson;
 
 namespace Data
 {
     public interface IMongoRepository<T> where T : EntityBase, new()
     {
+        Task DeleteById(string id);
+
         IMongoQueryable<T> Query { get; set; }
 
         Task<IEnumerable<T>> GetMany(Expression<Func<T, bool>> expression);
 
         Task<IEnumerable<T>> GetAll();
 
-        Task<T> GetOne(Expression<Func<T, bool>> expression);
+        Task<T> GetOne(string id);
 
         Task<T> FindOneAndUpdate(Expression<Func<T, bool>> expression, UpdateDefinition<T> update, FindOneAndUpdateOptions<T> option);
 

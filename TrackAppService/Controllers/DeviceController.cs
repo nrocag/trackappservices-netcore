@@ -1,13 +1,12 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Bussiness;
+using Entities.Model;
+using Entities.Response.Device;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Net.Mime;
 using System.Threading.Tasks;
-using Bussiness;
-using Entities.Model;
-using Entities.Response.Device;
-using Entities.Response;
 
 namespace TrackAppService.Controllers
 {
@@ -25,6 +24,7 @@ namespace TrackAppService.Controllers
         // GET api/values
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<IEnumerable<Device>>> Get()
         {
@@ -35,11 +35,11 @@ namespace TrackAppService.Controllers
                 DeviceResponse response = await this.bussiness.GetAll();
                 IEnumerable<Device> devices = (response as DeviceResponseQueryBySeveral).Devices;
 
-                action = response.ActionResponse.Success ? Ok(devices) : (ActionResult)NotFound(response.ActionResponse.Message);
+                action = response.ActionResponse.Success ? this.Ok(devices) : (ActionResult)this.NotFound(response.ActionResponse.Message);
             }
             catch (System.Exception ex)
             {
-                action = StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+                action = this.StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
 
             return action;
@@ -64,11 +64,11 @@ namespace TrackAppService.Controllers
                 DeviceResponse response = await this.bussiness.GetById(id);
                 Device device = (response as DeviceResponseQueryByOne).Device;
 
-                action = response.ActionResponse.Success ? Ok(device) : (ActionResult)NotFound(response.ActionResponse.Message);
+                action = response.ActionResponse.Success ? this.Ok(device) : (ActionResult)this.NotFound(response.ActionResponse.Message);
             }
             catch (System.Exception ex)
             {
-                action = StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+                action = this.StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
 
             return action;
@@ -85,22 +85,22 @@ namespace TrackAppService.Controllers
 
             try
             {
-                if (ModelState.IsValid)
+                if (this.ModelState.IsValid)
                 {
                     DeviceResponse response = await this.bussiness.Create(device);
 
                     Uri urlGet = new Uri(string.Format("{0}{1}/{2}", this.Request.Host.Value, this.Request.Path, device._id));
 
-                    action = Created(urlGet, response.ActionResponse.Message);
+                    action = this.Created(urlGet, response.ActionResponse.Message);
                 }
                 else
                 {
-                    action = Conflict(ModelState);
+                    action = this.Conflict(this.ModelState);
                 }
             }
             catch (System.Exception ex)
             {
-                action = StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+                action = this.StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
 
             return action;
@@ -119,20 +119,20 @@ namespace TrackAppService.Controllers
 
             try
             {
-                if (ModelState.IsValid)
+                if (this.ModelState.IsValid)
                 {
                     DeviceResponse response = await this.bussiness.Update(id, device);
 
-                    action = response.ActionResponse.Success ? Ok(response.ActionResponse.Message) : (ActionResult)BadRequest(response.ActionResponse.Message);
+                    action = response.ActionResponse.Success ? this.Ok(response.ActionResponse.Message) : (ActionResult)this.BadRequest(response.ActionResponse.Message);
                 }
                 else
                 {
-                    action = Conflict(ModelState);
+                    action = this.Conflict(this.ModelState);
                 }
             }
             catch (System.Exception ex)
             {
-                action = StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+                action = this.StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
 
             return action;
@@ -150,11 +150,11 @@ namespace TrackAppService.Controllers
             {
                 DeviceResponse response = await this.bussiness.Delete(id);
 
-                action = Ok(response.ActionResponse.Message);
+                action = this.Ok(response.ActionResponse.Message);
             }
             catch (System.Exception ex)
             {
-                action = StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+                action = this.StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
 
             return action;
